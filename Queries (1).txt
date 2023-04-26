@@ -48,18 +48,45 @@
 
 -- QUERY 4 (user-defined exception which does not allow you to enter a name whose letters are less than 5)
 
-CREATE OR REPLACE TRIGGER check_length_exeption
-BEFORE INSERT ON PRODUCT
-FOR EACH ROW
+-- CREATE OR REPLACE TRIGGER check_length_exeption
+-- BEFORE INSERT ON PRODUCT
+-- FOR EACH ROW
+-- DECLARE
+--    min_length EXCEPTION;
+-- BEGIN
+--    IF LENGTH(:NEW.NAME) < 5 THEN
+--       RAISE min_length;
+--    END IF;
+-- EXCEPTION
+--    WHEN min_length THEN
+--     RAISE_APPLICATION_ERROR(-20001, 'Title must be at least 5 characters long');
+-- END;
+
 DECLARE
-   min_length EXCEPTION;
+  i_input PRODUCT.PRODUCTID%TYPE;
+  n_input PRODUCT.NAME%TYPE;
+  p_input PRODUCT.PRICE%TYPE;
+  d_input PRODUCT.DESCRIPTION%TYPE;
+  c_input PRODUCT.CATEGORYID%TYPE;
+  b_input PRODUCT.BRANDID%TYPE;
+  exeptable_length EXCEPTION;
 BEGIN
-   IF LENGTH(:NEW.NAME) < 5 THEN
-      RAISE min_length;
-   END IF;
+  i_input := 22;
+  n_input := 'quandale dingle';
+  p_input := 2023;
+  d_input := 'dead';
+  c_input := 22;
+  b_input := 22;
+
+  IF LENGTH(n_input) > 5 THEN
+    INSERT INTO PRODUCT VALUES (i_input, n_input, p_input, d_input, c_input, b_input);
+    DBMS_OUTPUT.PUT_LINE('Data inserted successfully!');
+  ELSE
+    RAISE exeptable_length;
+  END IF;
 EXCEPTION
-   WHEN min_length THEN
-    RAISE_APPLICATION_ERROR(-20001, 'Title must be at least 5 characters long');
+  WHEN exeptable_length THEN
+    DBMS_OUTPUT.PUT_LINE('Input length must be at least 5 characters.');
 END;
 
 
