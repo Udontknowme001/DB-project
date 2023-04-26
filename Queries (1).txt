@@ -1,0 +1,76 @@
+-- QUERY 1 (the function which counts the number of records)
+
+-- CREATE OR REPLACE FUNCTION count_records
+-- RETURN NUMBER
+-- IS
+--    total_records NUMBER;
+-- BEGIN
+--    SELECT COUNT(*) INTO total_records FROM CUSTOMER;
+--    RETURN total_records;
+-- END;
+
+-- SELECT count_records() FROM dual;
+
+
+
+-- QUERY 2 (Procedure which does group by information)
+
+-- CREATE OR REPLACE PROCEDURE group_by_info
+-- AS
+-- BEGIN
+--    FOR r IN (SELECT NAME, COUNT(*) as cnt FROM CATEGORY GROUP BY NAME)
+--    LOOP
+--       DBMS_OUTPUT.PUT_LINE('Column ' || r.NAME || ' has ' || r.cnt || ' records');
+--    END LOOP;
+-- END;
+
+-- BEGIN
+--   group_by_info;
+-- END;
+
+
+-- QUERY 3 (Procedure which uses SQL%ROWCOUNT to determine the number of rows affected)
+
+-- CREATE OR REPLACE PROCEDURE update_records
+-- AS
+--    rows_updated NUMBER;
+-- BEGIN
+--    UPDATE PRODUCT SET NAME = '6000';
+--    rows_updated := SQL%ROWCOUNT;
+--    DBMS_OUTPUT.PUT_LINE(rows_updated || ' rows updated.');
+-- END;
+
+-- BEGIN
+--   update_records;
+-- END;
+
+
+
+-- QUERY 4 (user-defined exception which does not allow you to enter a name whose letters are less than 5)
+
+CREATE OR REPLACE TRIGGER check_length_exeption
+BEFORE INSERT ON PRODUCT
+FOR EACH ROW
+DECLARE
+   min_length EXCEPTION;
+BEGIN
+   IF LENGTH(:NEW.NAME) < 5 THEN
+      RAISE min_length;
+   END IF;
+EXCEPTION
+   WHEN min_length THEN
+    RAISE_APPLICATION_ERROR(-20001, 'Title must be at least 5 characters long');
+END;
+
+
+
+QUERY 5 (trigger that before insert on BRAND table will show the current number of rows in the table)
+
+CREATE OR REPLACE TRIGGER count_rows
+BEFORE INSERT ON BRAND
+DECLARE
+   num_rows NUMBER;
+BEGIN
+   SELECT COUNT(*) INTO num_rows FROM BRAND;
+   DBMS_OUTPUT.PUT_LINE('Current number of rows in table BRAND: ' || num_rows);
+END;
